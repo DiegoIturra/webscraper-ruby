@@ -1,5 +1,8 @@
-def main
-    puts "Hello world"
+class Scraper
+    def initialize()
+        puts "new scraper"
+    end
+
 end
 
-main
+scraper = Scraper::new
