@@ -5,7 +5,7 @@ class Scraper
     
     def initialize()
         @list_of_wishlist_urls = [
-            'https://www.buscalibre.cl/v2/fullmetal_1003773_l.html'
+            'https://www.buscalibre.cl/v2/literatura_729752_l.html'
         ]
     end
 
@@ -34,7 +34,8 @@ class Scraper
     end
 
     def get_price(document)
-        document.css('.precioAhora').text
+        #TODO: extract only one price and convert into integer
+        document.css('.precioAhora').text.split('$')
     end
 
     def get_availability(document)
