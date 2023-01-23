@@ -16,10 +16,13 @@ class Scraper
 
         title = get_title(document)
         image_path = get_image_path(document)
+        price = get_price(document)
+        availability = get_availability(document)
 
         puts title
         puts image_path
-
+        puts price
+        puts availability
     end
 
     def get_title(document)
@@ -30,12 +33,13 @@ class Scraper
         document.css('.imagen img').find{|picture| picture.attributes["data-src"]}.attributes["data-src"].value
     end
 
-    def get_price
-        #get book price
+    def get_price(document)
+        document.css('.precioAhora').text
     end
 
-    def get_availability
-        #return availability
+    def get_availability(document)
+        return false if get_price(document).empty?
+        return true
     end
 
 
@@ -64,4 +68,4 @@ class Scraper
 end
 
 scraper = Scraper::new
-scraper.do_scraping_book('https://www.buscalibre.cl/libro-transmetropolitan-libro-02-de-5/9788417908928/p/52088837')
+scraper.do_scraping_book('https://www.buscalibre.cl/libro-hellboy-edicion-integral-vol-3/9788467913439/p/38211771')
