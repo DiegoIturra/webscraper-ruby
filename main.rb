@@ -1,12 +1,11 @@
 require 'open-uri'
 require 'nokogiri'
-require 'csv'
 
 class Scraper
     
     def initialize()
         @list_of_wishlist_urls = [
-            'https://www.buscalibre.cl/v2/pendientes_486712_l.html'
+            'https://www.buscalibre.cl/v2/fullmetal_1003773_l.html'
         ]
     end
 
@@ -23,6 +22,7 @@ class Scraper
         puts image_path
         puts price
         puts availability
+        puts ""
     end
 
     def get_title(document)
@@ -44,6 +44,8 @@ class Scraper
 
 
     def get_all_books_urls
+        list_of_books_urls = []
+
         @list_of_wishlist_urls.each do |url|
             html = URI.open(url)
             document = Nokogiri::HTML(html)
@@ -54,11 +56,15 @@ class Scraper
             #Iterate over each div container getting the link to book page
             box_product.css('.box-producto').each do |box|
                 box.css('a').find{ |link| 
-                    link.attributes['href'].value
+                    book_url = link.attributes['href'].value
+                    list_of_books_urls.push(book_url)
                     break
                 }
             end
         end
+
+        list_of_books_urls
+
     end
 
     def do_scraping
@@ -68,4 +74,8 @@ class Scraper
 end
 
 scraper = Scraper::new
-scraper.do_scraping_book('https://www.buscalibre.cl/libro-hellboy-edicion-integral-vol-3/9788467913439/p/38211771')
+list_of_books_urls = scraper.do_scraping
+
+list_of_books_urls.each do |url|
+    scraper.do_scraping_book(url)
+end
