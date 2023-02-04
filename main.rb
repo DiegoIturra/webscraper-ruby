@@ -25,6 +25,17 @@ class Scraper
         puts ""
     end
 
+    def convert_price_to_integer price
+        splited_price = price.split('.')
+
+        number = splited_price.reduce{ |st1 , st2|  st1.strip + st2.strip }
+        number.to_i
+    end
+
+    def isEmpty?(price)
+        price.nil? ? true : price.empty?
+    end
+
     def get_title(document)
         document.css('.tituloProducto').text
     end
@@ -34,13 +45,14 @@ class Scraper
     end
 
     def get_price(document)
-        #TODO: extract only one price and convert into integer
-        document.css('.precioAhora').text.split('$')
+        #extract the first price belong to a new book instead of second hand book
+        price = document.css('.precioAhora').text.split('$')[1]
+
+        isEmpty?(price) ? "" : price 
     end
 
     def get_availability(document)
-        return false if get_price(document).empty?
-        return true
+        get_price(document).empty? ? false : true
     end
 
 
