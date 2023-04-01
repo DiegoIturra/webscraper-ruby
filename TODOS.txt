@@ -1,3 +1,0 @@
-1) Change prices when comes two of them.
-
-2) ...
