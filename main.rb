@@ -5,7 +5,24 @@ class Scraper
     
     def initialize()
         @list_of_wishlist_urls = [
-            'https://www.buscalibre.cl/v2/software-development_503034_l.html'
+            'https://www.buscalibre.cl/v2/pendientes_486712_l.html',
+            'https://www.buscalibre.cl/v2/software-development_503034_l.html',
+            'https://www.buscalibre.cl/v2/comics_545021_l.html',
+            'https://www.buscalibre.cl/v2/pendientes-2_567662_l.html',
+            'https://www.buscalibre.cl/v2/historia_606807_l.html',
+            'https://www.buscalibre.cl/v2/feminismo_624086_l.html',
+            'https://www.buscalibre.cl/v2/pendientes-3_657656_l.html',
+            'https://www.buscalibre.cl/v2/latinoamericana_711603_l.html',
+            'https://www.buscalibre.cl/v2/estudio_727965_l.html',
+            'https://www.buscalibre.cl/v2/literatura_729752_l.html',
+            'https://www.buscalibre.cl/v2/contra_737670_l.html',
+            'https://www.buscalibre.cl/v2/english-books_816771_l.html',
+            'https://www.buscalibre.cl/v2/filosofia-sociologia_830510_l.html',
+            'https://www.buscalibre.cl/v2/cortos_831079_l.html',
+            'https://www.buscalibre.cl/v2/tolkien_921085_l.html',
+            'https://www.buscalibre.cl/v2/fullmetal_1003773_l.html',
+            'https://www.buscalibre.cl/v2/cuentos_1079781_l.html',
+            'https://www.buscalibre.cl/v2/estudio2_1218140_l.html'
         ]
     end
 
@@ -93,12 +110,12 @@ end
 scraper = Scraper::new
 list_of_books_urls = scraper.do_scraping
 
-number_of_threads = 4
+number_of_threads = 8
 threads = []
 
 start_time = Time.now
 
-list_of_books_urls.each_slice((list_of_books_urls.size/4.0).ceil) do |urls|
+list_of_books_urls.each_slice((list_of_books_urls.size/8.0).ceil) do |urls|
     threads << Thread.new do
         urls.each do |url|
             scraper.do_scraping_book(url)
