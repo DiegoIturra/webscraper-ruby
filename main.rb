@@ -89,13 +89,21 @@ end
 scraper = Scraper::new
 list_of_books_urls = scraper.do_scraping
 
+number_of_threads = 4
+threads = []
+
 start_time = Time.now
 
-list_of_books_urls.each do |url|
-    scraper.do_scraping_book(url)
+list_of_books_urls.each_slice((list_of_books_urls.size/4.0).ceil) do |urls|
+    threads << Thread.new do
+        urls.each do |url|
+            scraper.do_scraping_book(url)
+        end
+    end
 end
 
-end_time = Time.now
+threads.each(&:join)
 
+end_time = Time.now
 
 puts "Time to get all info #{end_time - start_time} seconds"
