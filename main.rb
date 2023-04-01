@@ -89,6 +89,13 @@ end
 scraper = Scraper::new
 list_of_books_urls = scraper.do_scraping
 
+start_time = Time.now
+
 list_of_books_urls.each do |url|
     scraper.do_scraping_book(url)
 end
+
+end_time = Time.now
+
+
+puts "Time to get all info #{end_time - start_time} seconds"
