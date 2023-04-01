@@ -1,5 +1,6 @@
 require 'open-uri'
 require 'nokogiri'
+require 'concurrent'
 
 class Scraper
     
@@ -24,6 +25,8 @@ class Scraper
             'https://www.buscalibre.cl/v2/cuentos_1079781_l.html',
             'https://www.buscalibre.cl/v2/estudio2_1218140_l.html'
         ]
+
+        @number_of_threads = 8
     end
 
     def do_scraping_book(url)
@@ -76,7 +79,41 @@ class Scraper
         get_price(document).empty? ? false : true
     end
 
+    #Process a url of a list of wishlist
+    def process_url(url, list_of_books_urls = [])
+        html = URI.open(url)
+        document = Nokogiri::HTML(html)
 
+        #Get main container for books
+        box_product = document.css('.productos')
+
+        #Iterate over each div container getting the link to book page
+        box_product.css('.box-producto').each do |box|
+            box.css('a').find{ |link| 
+                book_url = link.attributes['href'].value
+                list_of_books_urls.push(book_url)
+                break
+            }
+        end
+    end
+
+    def get_all_books_urls_concurrent
+        split_urls = @list_of_wishlist_urls.each_slice((@list_of_wishlist_urls.size/@number_of_threads.to_f).ceil).to_a
+        
+        list_of_books_urls = []
+
+        promises = split_urls.map.with_index do |urls, i|
+            Concurrent::Promise.execute { urls.each { |url| process_url(url, list_of_books_urls) } }
+        end
+
+        # Wait for all threads to finish
+        promises.each(&:wait)
+
+        list_of_books_urls
+
+    end
+
+    #Deprecated
     def get_all_books_urls
         list_of_books_urls = []
 
@@ -102,7 +139,7 @@ class Scraper
     end
 
     def do_scraping
-        get_all_books_urls
+        get_all_books_urls_concurrent
     end
 
 end
