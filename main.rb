@@ -5,7 +5,7 @@ class Scraper
     
     def initialize()
         @list_of_wishlist_urls = [
-            'https://www.buscalibre.cl/v2/literatura_729752_l.html'
+            'https://www.buscalibre.cl/v2/software-development_503034_l.html'
         ]
     end
 
@@ -41,7 +41,11 @@ class Scraper
     end
 
     def get_image_path(document)
-        document.css('.imagen img').find{|picture| picture.attributes["data-src"]}.attributes["data-src"].value
+        begin
+            document.css('.imagen img').find{|picture| picture.attributes["data-src"]}.attributes["data-src"].value
+        rescue => e
+            document.css('.imagen img').find{|picture| picture.attributes["src"]}.attributes["src"].value
+        end
     end
 
     def get_price(document)
