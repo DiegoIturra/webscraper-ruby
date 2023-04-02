@@ -38,11 +38,11 @@ class Scraper
         price = get_price(document)
         availability = get_availability(document)
 
-        puts title
-        puts image_path
-        puts price
-        puts availability
-        puts ""
+        # puts title
+        # puts image_path
+        # puts price
+        # puts availability
+        # puts ""
     end
 
     def convert_price_to_integer price
@@ -144,24 +144,43 @@ class Scraper
 
 end
 
-scraper = Scraper::new
-list_of_books_urls = scraper.do_scraping
 
-number_of_threads = 8
-threads = []
+class ExecutionTask
 
-start_time = Time.now
+    def initialize
+        @scraper = Scraper::new
+        @number_of_threads = 8
 
-list_of_books_urls.each_slice((list_of_books_urls.size/8.0).ceil) do |urls|
-    threads << Thread.new do
-        urls.each do |url|
-            scraper.do_scraping_book(url)
-        end
     end
+
+    def get_all_data
+        list_of_books_urls = get_list_of_all_books
+        threads = []
+
+        start_time = Time.now
+
+        list_of_books_urls.each_slice((list_of_books_urls.size/@number_of_threads.to_f).ceil) do |urls|
+            threads << Thread.new do
+                urls.each do |url|
+                    @scraper.do_scraping_book(url)
+                end
+            end
+        end
+
+        threads.each(&:join)
+
+        end_time = Time.now
+
+        puts "Time to get all info #{end_time - start_time} seconds"
+
+    end
+
+    private 
+    def get_list_of_all_books
+        @scraper.do_scraping
+    end
+
 end
 
-threads.each(&:join)
-
-end_time = Time.now
-
-puts "Time to get all info #{end_time - start_time} seconds"
+task = ExecutionTask.new 
+task.get_all_data
