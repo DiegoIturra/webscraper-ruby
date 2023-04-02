@@ -1,0 +1,31 @@
+GEM
+  remote: https://rubygems.org/
+  specs:
+    bson (4.15.0)
+    concurrent-ruby (1.1.10)
+    date (3.3.3)
+    mongo (2.18.2)
+      bson (>= 4.14.1, < 5.0.0)
+    nokogiri (1.14.2-x86_64-darwin)
+      racc (~> 1.4)
+    open-uri (0.3.0)
+      stringio
+      time
+      uri
+    racc (1.6.2)
+    stringio (3.0.5)
+    time (0.2.2)
+      date
+    uri (0.12.1)
+
+PLATFORMS
+  x86_64-darwin-21
+
+DEPENDENCIES
+  concurrent-ruby (~> 1.1.10)
+  mongo (~> 2.18.2)
+  nokogiri (~> 1.14.0)
+  open-uri (~> 0.3.0)
+
+BUNDLED WITH
+   2.2.30

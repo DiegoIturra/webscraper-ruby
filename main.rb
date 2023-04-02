@@ -1,6 +1,7 @@
 require 'open-uri'
 require 'nokogiri'
-require 'concurrent'
+require 'concurrent-ruby'
+require 'mongo'
 
 class Scraper
     
@@ -38,11 +39,11 @@ class Scraper
         price = get_price(document)
         availability = get_availability(document)
 
-        # puts title
-        # puts image_path
-        # puts price
-        # puts availability
-        # puts ""
+        puts title
+        puts image_path
+        puts price
+        puts availability
+        puts ""
     end
 
     def convert_price_to_integer price
