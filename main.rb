@@ -204,5 +204,5 @@ task = ExecutionTask.new
 
 #Perform database connection, getter and disconnect
 DatabaseConnection.connect()
-db = DatabaseConnection.database
+database = DatabaseConnection.database
 DatabaseConnection.disconnect
