@@ -185,7 +185,7 @@ class ExecutionTask
         puts "Time to get all info #{end_time - start_time} seconds"
 
         puts "After scraping work proceed to insert all documents in mongoDB"
-        perform_database_inserts(scraped_book_documents)
+        puts perform_database_inserts(scraped_book_documents)
 
     end
 
