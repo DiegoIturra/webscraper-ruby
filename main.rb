@@ -1,6 +1,7 @@
 require 'open-uri'
 require 'nokogiri'
 require 'concurrent-ruby'
+require 'mongo'
 
 class Scraper
     
@@ -71,12 +72,11 @@ class Scraper
     def get_price(document)
         #extract the first price belong to a new book instead of second hand book
         price = document.css('.precioAhora').text.split('$')[1]
-
-        isEmpty?(price) ? "" : price 
+        isEmpty?(price) ? nil : price.delete('.').to_i
     end
 
     def get_availability(document)
-        get_price(document).empty? ? false : true
+        get_price(document).nil? ? false : true
     end
 
     #Process a url of a list of wishlist
@@ -182,5 +182,27 @@ class ExecutionTask
 
 end
 
+class DatabaseConnection
+
+    def self.connect()
+        client = Mongo::Client.new([ '127.0.0.1:27017' ], :database => 'test')
+        @database = client.database
+    end
+
+    def self.disconnect
+        @database.client.close
+    end
+
+    def self.database
+        @database
+    end
+
+end
+
 task = ExecutionTask.new 
-task.get_all_data
+#task.get_all_data
+
+#Perform database connection, getter and disconnect
+DatabaseConnection.connect()
+db = DatabaseConnection.database
+DatabaseConnection.disconnect
