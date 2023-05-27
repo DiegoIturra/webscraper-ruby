@@ -1,18 +1,15 @@
-require 'etc'
-require 'concurrent'
+#TODO: guardar datos en una base de datos no relacional
+#TODO: guardar un timestamp por cada ejecucion del scraper
+require 'mongo'
+require 'pp'
 
-def get_number_of_cpus
-    puts "Number of CPU cores: #{Etc.nprocessors}"
+client = Mongo::Client.new([ '127.0.0.1:27017' ], :database => 'test')
+db = client.database
+
+books_collection = client[:books]
+
+#print collections in the current collection
+books_collection.find.each do |document|
+    pp document
+    puts ''
 end
-
-def get_number_of_threads_per_core
-    num_cores = Concurrent.processor_count
-    hardware_threads_per_core = 2 # assuming hyper-threading is supported
-    num_threads_per_core = num_cores * hardware_threads_per_core
-
-    puts "Number of threads per core: #{num_threads_per_core}"
-end
-
-
-get_number_of_cpus()
-get_number_of_threads_per_core()

@@ -2,6 +2,7 @@ require 'open-uri'
 require 'nokogiri'
 require 'concurrent-ruby'
 require 'mongo'
+require 'pp'
 
 class Scraper
     
@@ -39,11 +40,20 @@ class Scraper
         price = get_price(document)
         availability = get_availability(document)
 
-        puts title
-        puts image_path
-        puts price
-        puts availability
-        puts ""
+        # puts title
+        # puts image_path
+        # puts price
+        # puts availability
+        # puts ""
+
+        book = {
+            title: title,
+            image_url: image_path,
+            price: price,
+            availability: availability
+        }
+        
+        book
     end
 
     def convert_price_to_integer price
@@ -147,22 +157,23 @@ end
 
 class ExecutionTask
 
-    def initialize
+    def initialize(database)
         @scraper = Scraper::new
         @number_of_threads = 8
-
+        @database = database
     end
 
     def get_all_data
         list_of_books_urls = get_list_of_all_books
         threads = []
+        scraped_book_documents = []
 
         start_time = Time.now
 
         list_of_books_urls.each_slice((list_of_books_urls.size/@number_of_threads.to_f).ceil) do |urls|
             threads << Thread.new do
                 urls.each do |url|
-                    @scraper.do_scraping_book(url)
+                    scraped_book_documents << @scraper.do_scraping_book(url) 
                 end
             end
         end
@@ -173,11 +184,20 @@ class ExecutionTask
 
         puts "Time to get all info #{end_time - start_time} seconds"
 
+        puts "After scraping work proceed to insert all documents in mongoDB"
+        perform_database_inserts(scraped_book_documents)
+
     end
 
     private 
     def get_list_of_all_books
         @scraper.do_scraping
+    end
+
+    def perform_database_inserts(scraped_book_documents)
+        books_collection = @database[:books]
+        books_collection.insert_many(scraped_book_documents)
+        return books_collection.count
     end
 
 end
@@ -199,10 +219,12 @@ class DatabaseConnection
 
 end
 
-task = ExecutionTask.new 
-#task.get_all_data
-
 #Perform database connection, getter and disconnect
 DatabaseConnection.connect()
 database = DatabaseConnection.database
+
+
+task = ExecutionTask.new(database)
+task.get_all_data
+
 DatabaseConnection.disconnect
