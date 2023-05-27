@@ -208,7 +208,7 @@ class DatabaseConnection
         @database = nil
         
         begin
-            client = Mongo::Client.new([ '127.0.0.1:27017' ], :database => 'test1')
+            client = Mongo::Client.new([ '127.0.0.1:27017' ], :database => 'test')
             @database = client.database
         rescue Mongo::Error::NoServerAvailable => e
             puts "Error: Unable to connect to the MongoDB server. #{e.message}"
