@@ -185,8 +185,8 @@ class ExecutionTask
         puts "Time to get all info #{end_time - start_time} seconds"
 
         puts "After scraping work proceed to insert all documents in mongoDB"
-        puts perform_database_inserts(scraped_book_documents)
 
+        puts @database.nil? ? "Database doesn't exist" : perform_database_inserts(scraped_book_documents)
     end
 
     private 
@@ -205,12 +205,23 @@ end
 class DatabaseConnection
 
     def self.connect()
-        client = Mongo::Client.new([ '127.0.0.1:27017' ], :database => 'test')
-        @database = client.database
+        @database = nil
+        
+        begin
+            client = Mongo::Client.new([ '127.0.0.1:27017' ], :database => 'test1')
+            @database = client.database
+        rescue Mongo::Error::NoServerAvailable => e
+            puts "Error: Unable to connect to the MongoDB server. #{e.message}"
+        rescue Mongo::Error::SocketError => e    
+            puts "Error: A Socket error has occurred. #{e.mmesage}"
+        rescue => e
+            puts "Error: An unexpected error occurred. #{e.message}"
+        end
+
     end
 
     def self.disconnect
-        @database.client.close
+        @database.client.close if not @database.nil?
     end
 
     def self.database
@@ -225,6 +236,6 @@ database = DatabaseConnection.database
 
 
 task = ExecutionTask.new(database)
-task.get_all_data
+#task.get_all_data
 
 DatabaseConnection.disconnect
