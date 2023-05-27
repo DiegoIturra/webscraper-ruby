@@ -1,7 +1,6 @@
 require 'open-uri'
 require 'nokogiri'
 require 'concurrent-ruby'
-require 'mongo'
 
 class Scraper
     
