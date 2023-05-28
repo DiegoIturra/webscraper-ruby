@@ -4,6 +4,13 @@ require 'concurrent-ruby'
 require 'mongo'
 require 'pp'
 
+class Utils
+    def self.get_name_of_wishlist_from_url(url)
+        splited_url = url.split('/')
+        splited_url.last.split('_')[0]
+    end    
+end
+
 class Scraper
     
     def initialize()
@@ -227,7 +234,6 @@ end
 #Perform database connection, getter and disconnect
 DatabaseConnection.connect()
 database = DatabaseConnection.database
-
 
 task = ExecutionTask.new(database)
 task.get_all_data
