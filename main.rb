@@ -40,12 +40,6 @@ class Scraper
         price = get_price(document)
         availability = get_availability(document)
 
-        # puts title
-        # puts image_path
-        # puts price
-        # puts availability
-        # puts ""
-
         book = {
             title: title,
             image_url: image_path,
@@ -236,6 +230,6 @@ database = DatabaseConnection.database
 
 
 task = ExecutionTask.new(database)
-#task.get_all_data
+task.get_all_data
 
 DatabaseConnection.disconnect
